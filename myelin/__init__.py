@@ -29,6 +29,7 @@ from .converter import (
 # High-level orchestrator
 from .core import Myelin, MyelinOutput
 from .helpers.cms_downloader import CMSDownloader
+from .helpers.utils import ReturnCode
 
 # HHA Grouper
 from .hhag import HhagClient, HhagEdit, HhagOutput
@@ -160,4 +161,5 @@ __all__ = [
     # Orchestrator
     "Myelin",
     "MyelinOutput",
+    "ReturnCode",
 ]
