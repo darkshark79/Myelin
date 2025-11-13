@@ -90,7 +90,7 @@ class HospiceOutput(BaseModel):
 
 class BillingGroup:
     def __init__(
-        self, service_date: datetime, hcpcs_code: str, revenue_code: str, units: int
+        self, service_date: datetime, hcpcs_code: str, revenue_code: str, units: float
     ):
         self.service_date = service_date
         self.hcpcs_code = hcpcs_code
@@ -396,13 +396,13 @@ class HospiceClient:
             )
             billing_group.setHcpcsCode(self.java_string_class(group.hcpcs_code))
             billing_group.setRevenueCode(self.java_string_class(group.revenue_code))
-            billing_group.setUnits(self.java_integer_class(group.units))
+            billing_group.setUnits(self.java_integer_class(int(group.units)))
             billing_group_list.add(billing_group)
         claim_object.setBillingGroups(billing_group_list)
 
         eola_days = self.array_list_class()
         for i, units in enumerate(siu_units):
-            eola_days.add(self.java_integer_class(units))
+            eola_days.add(self.java_integer_class(int(units)))
         claim_object.setEndOfLifeAddOnDaysUnits(eola_days)
         pricing_request.setClaimData(claim_object)
         return pricing_request

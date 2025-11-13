@@ -318,7 +318,7 @@ class FqhcClient:
         for line in ioce_output.line_item_list:
             ioce_service_line = self.fqhc_ioce_service_line_class()
             ioce_service_line.setActionFlag(line.action_flag_output)
-            ioce_service_line.setBilledUnits(line.units_input)
+            ioce_service_line.setBilledUnits(int(line.units_input))
             ioce_service_line.setCompositeAdjustmentFlag(line.composite_adjustment_flag)
             ioce_service_line.setCoveredCharges(
                 self.java_big_decimal_class(line.charge)

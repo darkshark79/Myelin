@@ -26,7 +26,7 @@ class RevCodeData:
         self.code: Optional[str] = None
         self.earliest_date: Optional[datetime] = None
         self.count: Optional[int] = None
-        self.total_units: Optional[int] = None
+        self.total_units: Optional[float] = None
 
 
 def get_rev_code_data(claim: Claim) -> dict[str, RevCodeData]:
@@ -41,14 +41,14 @@ def get_rev_code_data(claim: Claim) -> dict[str, RevCodeData]:
                 if data.earliest_date is None or line.service_date < data.earliest_date:
                     data.earliest_date = line.service_date
             data.count += 1
-            data.total_units += line.units if line.units else 0
+            data.total_units += line.units if line.units else 0.0
         else:
             data = RevCodeData()
             data.code = rev_code
             if line.service_date:
                 data.earliest_date = line.service_date
             data.count = 1
-            data.total_units = line.units if line.units else 0
+            data.total_units = line.units if line.units else 0.0
             rev_code_data[rev_code] = data
     return rev_code_data
 
@@ -309,7 +309,7 @@ class HhaClient:
             )
             java_rev.setRevenueCode(data.code)
             java_rev.setQuantityOfCoveredVisits(data.count)
-            java_rev.setQuantityOfOutlierUnits(data.total_units)
+            java_rev.setQuantityOfOutlierUnits(int(data.total_units))
             rev_list.add(java_rev)
         claim_object.setRevenueLines(rev_list)
 

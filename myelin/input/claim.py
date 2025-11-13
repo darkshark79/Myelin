@@ -234,7 +234,7 @@ class LineItem(BaseModel):
     revenue_code: str = ""
     hcpcs: str = ""
     modifiers: List[str] = Field(default_factory=list)
-    units: int = 0
+    units: float = 0.0
     charges: float = 0.0
     ndc: str = ""
     ndc_units: float = 0.0

@@ -184,7 +184,7 @@ class SnfClient:
             )
 
         claim_obj.setHippsCode(hipps_code)
-        claim_obj.setServiceUnits(self.java_integer_class(hipps_units))
+        claim_obj.setServiceUnits(self.java_integer_class(int(hipps_units)))
         claim_obj.setServiceFromDate(self.py_date_to_java_date(claim.from_date))
         claim_obj.setServiceThroughDate(self.py_date_to_java_date(claim.thru_date))
 
