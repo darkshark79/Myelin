@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 from logging import Logger, getLogger
 from threading import current_thread
@@ -242,6 +243,68 @@ class IpfClient:
         self.java_string_class = jpype.JClass(
             "java.lang.String", loader=self.url_loader.class_loader
         )
+
+    def extract_resource(self, resource_file_name: str) -> bytes:
+        """
+        Extracts a resource file from the IPF pricer JAR file to memory.
+
+        Args:
+            resource_file_name: Name of the resource file to extract
+        Returns:
+            bytes: The extracted resource file as bytes
+        """
+        BufferedInputStream = jpype.JClass("java.io.BufferedInputStream")
+        ByteArrayOutputStream = jpype.JClass("java.io.ByteArrayOutputStream")
+
+        stream = self.ipf_csv_ingest_class.class_.getResourceAsStream(
+            f"/{resource_file_name}"
+        )
+        if stream is None:
+            raise FileNotFoundError(f"{resource_file_name} not found in that JAR")
+
+        bis = BufferedInputStream(stream)
+        baos = ByteArrayOutputStream()
+        buf = jpype.JArray(jpype.JByte)(4096)
+
+        while True:
+            n = bis.read(buf)
+            if n == -1:
+                break
+            baos.write(buf, 0, n)
+
+        data = bytes(baos.toByteArray())  # Python bytes
+        bis.close()
+        return data
+
+    def extract_resource_file(
+        self, resource_file_name: str, extract_dir: str | None = None
+    ):
+        """
+        Extracts a resource file from the IPF pricer JAR file.
+
+        Args:
+            resource_file_name: Name of the resource file to extract
+            extract_dir: Directory to extract the resource file to
+        """
+        ins = self.ipf_csv_ingest_class.class_.getResourceAsStream(
+            f"/{resource_file_name}"
+        )
+        if ins is None:
+            raise FileNotFoundError(f"{resource_file_name} not found in that JAR")
+
+        Files = jpype.JClass("java.nio.file.Files")
+        Paths = jpype.JClass("java.nio.file.Paths")
+        StandardCopyOption = jpype.JClass("java.nio.file.StandardCopyOption")
+
+        Files.copy(
+            ins, Paths.get(resource_file_name), StandardCopyOption.REPLACE_EXISTING
+        )
+        if extract_dir:
+            os.makedirs(extract_dir, exist_ok=True)
+            shutil.move(
+                resource_file_name, os.path.join(extract_dir, resource_file_name)
+            )
+        ins.close()
 
     def pricer_setup(self):
         self.ipf_config_obj = self.ipf_price_config()

@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 from datetime import datetime
 
 import pytest
@@ -330,3 +332,159 @@ def test_hhag_grouper(myelin_or_skip):
     claim.oasis_assessment.ambulation = "3"
     output = myelin_or_skip.hhag_client.process(claim)
     assert hasattr(output, "model_dump")
+
+
+def test_ipps_extract_resource_file(myelin_or_skip):
+    """Test extracting resource files from IPPS pricer JAR across multiple years."""
+    if not pricer_available("ipps-pricer"):
+        pytest.skip("IPPS pricer jar not present in ./jars/pricers")
+    if myelin_or_skip.ipps_client is None:
+        pytest.skip("IPPS client not initialized")
+
+    # Create a temporary directory for extractions
+    with tempfile.TemporaryDirectory() as extract_dir:
+        extracted_files = []
+        attempted_files = []
+        start = 2020
+
+        # Try to extract drgstable files from 2020 to current year + 1
+        while start < datetime.now().year + 1:
+            year = start + 1
+            filename = f"drgstable-{year}.csv"
+            attempted_files.append(filename)
+
+            try:
+                myelin_or_skip.ipps_client.extract_resource_file(filename, extract_dir)
+
+                # Verify the file was extracted to the correct location
+                extracted_path = os.path.join(extract_dir, filename)
+                assert os.path.exists(extracted_path), (
+                    f"{filename} should exist in {extract_dir}"
+                )
+                assert os.path.getsize(extracted_path) > 0, (
+                    f"{filename} should not be empty"
+                )
+
+                extracted_files.append(filename)
+                start = year
+            except FileNotFoundError:
+                # Expected for years where the resource doesn't exist
+                start += 1
+            except Exception as e:
+                pytest.fail(f"Unexpected error extracting resource file: {e}")
+
+        # Ensure we attempted to extract at least one file and all attempts succeeded
+        assert len(attempted_files) > 0, (
+            "Should have attempted to extract at least one file"
+        )
+        assert len(extracted_files) == len(attempted_files), (
+            f"Should have extracted {len(attempted_files)} files but got {len(extracted_files)}"
+        )
+
+    # Test error handling for non-existent resource
+    with pytest.raises(FileNotFoundError, match="not found in that JAR"):
+        myelin_or_skip.ipps_client.extract_resource_file("nonexistent-file.csv")
+
+
+def test_ipf_extract_resource_file(myelin_or_skip):
+    """Test extracting resource files from IPF pricer JAR across multiple years."""
+    if not pricer_available("ipf-pricer"):
+        pytest.skip("IPF pricer jar not present in ./jars/pricers")
+    if myelin_or_skip.ipf_client is None:
+        pytest.skip("IPF client not initialized")
+
+    # Create a temporary directory for extractions
+    with tempfile.TemporaryDirectory() as extract_dir:
+        extracted_files = []
+        attempted_files = []
+        start = 2020
+
+        # Try to extract drg files from 2020 to current year + 1
+        while start < datetime.now().year + 1:
+            year = start + 1
+            filename = f"drg-{year}.csv"
+            attempted_files.append(filename)
+
+            try:
+                myelin_or_skip.ipf_client.extract_resource_file(filename, extract_dir)
+
+                # Verify the file was extracted to the correct location
+                extracted_path = os.path.join(extract_dir, filename)
+                assert os.path.exists(extracted_path), (
+                    f"{filename} should exist in {extract_dir}"
+                )
+                assert os.path.getsize(extracted_path) > 0, (
+                    f"{filename} should not be empty"
+                )
+
+                extracted_files.append(filename)
+                start = year
+            except FileNotFoundError:
+                # Expected for years where the resource doesn't exist
+                start += 1
+            except Exception as e:
+                pytest.fail(f"Unexpected error extracting resource file: {e}")
+
+        # Ensure we attempted to extract at least one file and all attempts succeeded
+        assert len(attempted_files) > 0, (
+            "Should have attempted to extract at least one file"
+        )
+        assert len(extracted_files) == len(attempted_files), (
+            f"Should have extracted {len(attempted_files)} files but got {len(extracted_files)}"
+        )
+
+    # Test error handling for non-existent resource
+    with pytest.raises(FileNotFoundError, match="not found in that JAR"):
+        myelin_or_skip.ipf_client.extract_resource_file("nonexistent-file.csv")
+
+
+def test_ltch_extract_resource_file(myelin_or_skip):
+    """Test extracting resource files from LTCH pricer JAR across multiple years."""
+    if not pricer_available("ltch-pricer"):
+        pytest.skip("LTCH pricer jar not present in ./jars/pricers")
+    if myelin_or_skip.ltch_client is None:
+        pytest.skip("LTCH client not initialized")
+
+    # Create a temporary directory for extractions
+    with tempfile.TemporaryDirectory() as extract_dir:
+        extracted_files = []
+        attempted_files = []
+        start = 2020
+
+        # Try to extract ltdrgstable files from 2020 to current year + 1
+        while start < datetime.now().year + 1:
+            year = start + 1
+            filename = f"ltdrgstable-{year}.csv"
+            attempted_files.append(filename)
+
+            try:
+                myelin_or_skip.ltch_client.extract_resource_file(filename, extract_dir)
+
+                # Verify the file was extracted to the correct location
+                extracted_path = os.path.join(extract_dir, filename)
+                assert os.path.exists(extracted_path), (
+                    f"{filename} should exist in {extract_dir}"
+                )
+                assert os.path.getsize(extracted_path) > 0, (
+                    f"{filename} should not be empty"
+                )
+
+                extracted_files.append(filename)
+                start = year
+            except FileNotFoundError:
+                # Expected for years where the resource doesn't exist
+                start += 1
+            except Exception as e:
+                pytest.fail(f"Unexpected error extracting resource file: {e}")
+
+        # Ensure we attempted to extract at least one file and all attempts succeeded
+        assert len(attempted_files) > 0, (
+            "Should have attempted to extract at least one file"
+        )
+        assert len(extracted_files) == len(attempted_files), (
+            f"Should have extracted {len(attempted_files)} files but got {len(extracted_files)}"
+        )
+
+    # Test error handling for non-existent resource
+    with pytest.raises(FileNotFoundError, match="not found in that JAR"):
+        myelin_or_skip.ltch_client.extract_resource_file("nonexistent-file.csv")
