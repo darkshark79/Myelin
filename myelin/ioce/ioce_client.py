@@ -3,9 +3,7 @@ from datetime import datetime
 import jpype
 
 from myelin.helpers.utils import handle_java_exceptions
-from myelin.input.claim import (
-    PoaType,
-)
+from myelin.input.claim import PoaType, LineItem, IoceOverride
 from myelin.ioce.ioce_output import IoceOutput
 from myelin.plugins import apply_client_methods, run_client_load_classes
 
@@ -137,7 +135,7 @@ class IoceClient:
         amount_str = f"{int(value_code.amount * 100):09d}"  # Convert to cents
         return self.factory.createValueCode(value_code.code, amount_str)
 
-    def create_line_item(self, line_item):
+    def create_line_item(self, line_item: LineItem):
         """Create Java OceLineItem from Python LineItem"""
         if line_item is None:
             return None
@@ -175,6 +173,88 @@ class IoceClient:
         # Default to "0" if not specified
         java_line.setActionFlagInput("0")
 
+        if line_item.override is not None:
+            override_set = False
+            if line_item.override.apc is not None and line_item.override.apc != "":
+                java_line.setContractorApc(line_item.override.apc)
+                override_set = True
+            if (
+                line_item.override.status_indicator is not None
+                and line_item.override.status_indicator != ""
+            ):
+                java_line.setContractorStatusIndicator(
+                    line_item.override.status_indicator
+                )
+                override_set = True
+            if (
+                line_item.override.payment_indicator is not None
+                and line_item.override.payment_indicator != ""
+            ):
+                java_line.setContractorPaymentIndicator(
+                    line_item.override.payment_indicator
+                )
+                override_set = True
+            if (
+                line_item.override.discounting_formula is not None
+                and line_item.override.discounting_formula != ""
+            ):
+                java_line.setContractorDiscountingFormula(
+                    line_item.override.discounting_formula
+                )
+                override_set = True
+            if (
+                line_item.override.rejection_denial_flag is not None
+                and line_item.override.rejection_denial_flag != ""
+            ):
+                java_line.setContractorRejectionDenialFlag(
+                    line_item.override.rejection_denial_flag
+                )
+                override_set = True
+            if (
+                line_item.override.packaging_flag is not None
+                and line_item.override.packaging_flag != ""
+            ):
+                java_line.setContractorPackagingFlag(line_item.override.packaging_flag)
+                override_set = True
+            if (
+                line_item.override.payment_adjustment_flag_01 is not None
+                and line_item.override.payment_adjustment_flag_01 != ""
+            ):
+                java_line.setContractorPaymentAdjustmentFlag01(
+                    line_item.override.payment_adjustment_flag_01
+                )
+                override_set = True
+            if (
+                line_item.override.payment_method_flag is not None
+                and line_item.override.payment_method_flag != ""
+            ):
+                java_line.setContractorPaymentMethodFlag(
+                    line_item.override.payment_method_flag
+                )
+                override_set = True
+            if (
+                line_item.override.payment_adjustment_flag_02 is not None
+                and line_item.override.payment_adjustment_flag_02 != ""
+            ):
+                java_line.setContractorPaymentAdjustmentFlag02(
+                    line_item.override.payment_adjustment_flag_02
+                )
+                override_set = True
+
+            """
+            The IOCE has logic to ignore overrides if the edit bypass list is empty or does not contain
+            a valid edit value. We can "trick" the system to applying the overrides by adding the 
+            "invalid" edit value of "-1" to edit bypass list.
+            """
+
+            if (
+                line_item.override.edit_bypass_list is not None
+                and len(line_item.override.edit_bypass_list) > 0
+            ):
+                for bypass in line_item.override.edit_bypass_list:
+                    java_line.addContractorEditBypass(bypass)
+            elif override_set:
+                java_line.addContractorEditBypass("-1")
         return java_line
 
     def create_oce_claim(self, claim):

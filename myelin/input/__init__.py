@@ -18,6 +18,9 @@ from .claim import (
     ValueCode,
 )
 
+from .ioce import IoceOverride
+
+
 __all__ = [
     "Address",
     "Patient",
@@ -36,4 +39,5 @@ __all__ = [
     "IrfPai",
     "OasisAssessment",
     "Modules",
+    "IoceOverride",
 ]

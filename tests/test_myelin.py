@@ -17,6 +17,7 @@ from myelin.input import (
     OasisAssessment,
     PoaType,
     ValueCode,
+    IoceOverride,
 )
 
 
@@ -96,6 +97,16 @@ def test_ioce_process_opps_claim(myelin_or_skip):
     claim = opps_claim_example()
     output = myelin_or_skip.ioce_client.process(claim)
     assert hasattr(output, "model_dump"), "IOCE output should be a pydantic model"
+
+
+def test_ioce_with_override(myelin_or_skip: Myelin):
+    claim = opps_claim_example()
+    claim.lines[1].override = IoceOverride()
+    claim.lines[1].override.status_indicator = "C"
+    output = myelin_or_skip.ioce_client.process(claim)
+    assert output.line_item_list[1].status_indicator == "C", (
+        "IOCE should apply override to status indicator"
+    )
 
 
 def test_ipps_pricer_if_available(myelin_or_skip):

@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from .ioce import IoceOverride
 from .irf_pai import IrfPai
 from .oasis import OasisAssessment
 
@@ -240,3 +241,4 @@ class LineItem(BaseModel):
     ndc_units: float = 0.0
     pos: str = ""
     servicing_provider: Provider = Field(default_factory=Provider)
+    override: Optional[IoceOverride] = None
