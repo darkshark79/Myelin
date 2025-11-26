@@ -235,8 +235,8 @@ class FqhcClient:
             )
             .filter(
                 Zip9Data.zip_code == zip_code,
-                Zip9Data.effective_date <= claim.from_date,
-                Zip9Data.end_date >= claim.thru_date,
+                Zip9Data.effective_date <= claim.from_date.strftime("%Y-%m-%d"),
+                Zip9Data.end_date >= claim.thru_date.strftime("%Y-%m-%d"),
             )
             .order_by(Zip9Data.plus_four.desc())
             .all()
@@ -250,7 +250,7 @@ class FqhcClient:
             if plus_four_val is None or str(plus_four_val).strip() == "":
                 if local_session:
                     session.close()
-                return (carrier_val, plus_four_val)
+                return (carrier_val, loc_val)
             elif plus4 != "" and plus4 == plus_four_val:
                 if local_session:
                     session.close()
